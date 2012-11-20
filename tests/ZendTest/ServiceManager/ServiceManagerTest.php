@@ -578,13 +578,12 @@ class ServiceManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->serviceManager->setAllowOverride(true);
         $sm = $this->serviceManager;
-        $this->serviceManager->setFactory('http.response', function ($services) use ($sm) {
+        $this->serviceManager->setFactory('http.response', function () use ($sm) {
             return $sm;
         });
         $this->serviceManager->setAlias('response', 'http.response');
         $this->assertSame($sm, $this->serviceManager->get('response'));
 
-        $self = $this;
         $this->serviceManager->{$method}('response', $service);
         $this->{$assertion}($expected, $this->serviceManager->get('response'));
     }
@@ -614,5 +613,45 @@ class ServiceManagerTest extends \PHPUnit_Framework_TestCase
         $this->serviceManager->canCreateFromAbstractFactory('foo', 'foo');
 
         $this->assertSame($count + 1, FooCounterAbstractFactory::$instantiationCount);
+    }
+
+    /**
+     * @covers Zend\ServiceManager\ServiceManager::canCreateFromAbstractFactory
+     * @covers Zend\ServiceManager\ServiceManager::create
+     */
+    public function testAbstractFactoryNotUsedIfNotAbleToCreate()
+    {
+        $service = new \stdClass;
+
+        $af1 = $this->getMock('Zend\ServiceManager\AbstractFactoryInterface');
+        $af1->expects($this->any())->method('canCreateServiceWithName')->will($this->returnValue(true));
+        $af1->expects($this->any())->method('createServiceWithName')->will($this->returnValue($service));
+
+        $af2 = $this->getMock('Zend\ServiceManager\AbstractFactoryInterface');
+        $af2->expects($this->any())->method('canCreateServiceWithName')->will($this->returnValue(false));
+        $af2->expects($this->never())->method('createServiceWithName');
+
+        $this->serviceManager->addAbstractFactory($af1);
+        $this->serviceManager->addAbstractFactory($af2);
+
+        $this->assertSame($service, $this->serviceManager->create('test'));
+    }
+
+    /**
+     * @covers Zend\ServiceManager\ServiceManager::setAlias
+     * @covers Zend\ServiceManager\ServiceManager::get
+     * @covers Zend\ServiceManager\ServiceManager::retrieveFromPeeringManager
+     */
+    public function testCanGetAliasedServicesFromPeeringServiceManagers()
+    {
+        $service   = new \stdClass();
+        $peeringSm = new ServiceManager();
+
+        $peeringSm->setService('actual-service-name', $service);
+        $this->serviceManager->addPeeringServiceManager($peeringSm);
+
+        $this->serviceManager->setAlias('alias-name', 'actual-service-name');
+
+        $this->assertSame($service, $this->serviceManager->get('alias-name'));
     }
 }
