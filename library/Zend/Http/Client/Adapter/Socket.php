@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Http
  */
@@ -283,8 +283,10 @@ class Socket implements HttpAdapter, StreamInterface
                 if (!$test || $error) {
                     // Error handling is kind of difficult when it comes to SSL
                     $errorString = '';
-                    while (($sslError = openssl_error_string()) != false) {
-                        $errorString .= "; SSL error: $sslError";
+                    if (extension_loaded('openssl')) {
+                        while (($sslError = openssl_error_string()) != false) {
+                            $errorString .= "; SSL error: $sslError";
+                        }
                     }
                     $this->close();
 

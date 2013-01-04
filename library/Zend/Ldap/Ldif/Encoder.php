@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Ldap
  */
@@ -55,7 +55,7 @@ class Encoder
      */
     public static function decode($string)
     {
-        $encoder = new self(array());
+        $encoder = new static(array());
         return $encoder->_decode($string);
     }
 
@@ -136,7 +136,7 @@ class Encoder
      */
     public static function encode($value, array $options = array())
     {
-        $encoder = new self($options);
+        $encoder = new static($options);
 
         return $encoder->_encode($value);
     }
@@ -194,7 +194,7 @@ class Encoder
         $unsafe_char = array(0, 10, 13);
 
         $base64 = false;
-        for ($i = 0; $i < strlen($string); $i++) {
+        for ($i = 0, $len = strlen($string); $i < $len; $i++) {
             $char = ord(substr($string, $i, 1));
             if ($char >= 127) {
                 $base64 = true;

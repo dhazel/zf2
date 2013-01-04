@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Config
  */
@@ -71,7 +71,7 @@ class Config implements Countable, Iterator, ArrayAccess
 
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $this->data[$key] = new self($value, $this->allowModifications);
+                $this->data[$key] = new static($value, $this->allowModifications);
             } else {
                 $this->data[$key] = $value;
             }
@@ -123,7 +123,7 @@ class Config implements Countable, Iterator, ArrayAccess
         if ($this->allowModifications) {
 
             if (is_array($value)) {
-                $value = new self($value, true);
+                $value = new static($value, true);
             }
 
             if (null === $name) {
@@ -354,17 +354,19 @@ class Config implements Countable, Iterator, ArrayAccess
                     $this->data[$key]->merge($value);
                 } else {
                     if ($value instanceof self) {
-                        $this->data[$key] = new self($value->toArray(), $this->allowModifications);
+                        $this->data[$key] = new static($value->toArray(), $this->allowModifications);
                     } else {
                         $this->data[$key] = $value;
                     }
                 }
             } else {
                 if ($value instanceof self) {
-                    $this->data[$key] = new self($value->toArray(), $this->allowModifications);
+                    $this->data[$key] = new static($value->toArray(), $this->allowModifications);
                 } else {
                     $this->data[$key] = $value;
                 }
+
+                $this->count++;
             }
         }
 

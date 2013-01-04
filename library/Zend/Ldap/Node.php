@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  * @package   Zend_Ldap
  */
@@ -128,9 +128,9 @@ class Node extends Node\AbstractNode implements \Iterator, \RecursiveIterator
         if ($this->ldap === null) {
             throw new Exception\LdapException(null, 'No LDAP connection specified.',
                 Exception\LdapException::LDAP_OTHER);
-        } else {
-            return $this->ldap;
         }
+
+        return $this->ldap;
     }
 
     /**
@@ -245,7 +245,7 @@ class Node extends Node\AbstractNode implements \Iterator, \RecursiveIterator
         } else {
             throw new Exception\LdapException(null, '$dn is of a wrong data type.');
         }
-        $new = new self($dn, array(), false, null);
+        $new = new static($dn, array(), false, null);
         $new->ensureRdnAttributeValues();
         $new->setAttribute('objectClass', $objectClass);
 
@@ -273,7 +273,7 @@ class Node extends Node\AbstractNode implements \Iterator, \RecursiveIterator
         if ($data === null) {
             return null;
         }
-        $entry = new self($dn, $data, true, $ldap);
+        $entry = new static($dn, $data, true, $ldap);
 
         return $entry;
     }
@@ -299,7 +299,7 @@ class Node extends Node\AbstractNode implements \Iterator, \RecursiveIterator
             throw new Exception\LdapException(null, '\'dn\' key is of a wrong data type.');
         }
         $fromDataSource = ($fromDataSource === true) ? true : false;
-        $new            = new self($dn, $data, $fromDataSource, null);
+        $new            = new static($dn, $data, $fromDataSource, null);
         $new->ensureRdnAttributeValues();
 
         return $new;
@@ -816,9 +816,9 @@ class Node extends Node\AbstractNode implements \Iterator, \RecursiveIterator
             throw new Exception\LdapException(null, 'Cannot change attribute because it\'s part of the RDN');
         } elseif (in_array($name, static::$systemAttributes)) {
             throw new Exception\LdapException(null, 'Cannot change attribute because it\'s read-only');
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
