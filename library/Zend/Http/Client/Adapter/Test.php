@@ -53,7 +53,7 @@ class Test implements AdapterInterface
     /**
      * Whether or not the next request will fail with an exception
      *
-     * @var boolean
+     * @var bool
      */
     protected $nextRequestWillFail = false;
 
@@ -66,7 +66,7 @@ class Test implements AdapterInterface
     /**
      * Set the nextRequestWillFail flag
      *
-     * @param boolean $flag
+     * @param  bool $flag
      * @return \Zend\Http\Client\Adapter\Test
      */
     public function setNextRequestWillFail($flag)
@@ -105,7 +105,7 @@ class Test implements AdapterInterface
      *
      * @param string  $host
      * @param int     $port
-     * @param boolean $secure
+     * @param  bool $secure
      * @param int     $timeout
      * @throws Exception\RuntimeException
      */
@@ -122,12 +122,12 @@ class Test implements AdapterInterface
      *
      * @param string        $method
      * @param \Zend\Uri\Uri $uri
-     * @param string        $http_ver
+     * @param string        $httpVer
      * @param array         $headers
      * @param string        $body
      * @return string Request as string
      */
-    public function write($method, $uri, $http_ver = '1.1', $headers = array(), $body = '')
+    public function write($method, $uri, $httpVer = '1.1', $headers = array(), $body = '')
     {
         $host = $uri->getHost();
             $host = (strtolower($uri->getScheme()) == 'https' ? 'sslv2://' . $host : $host);
@@ -138,7 +138,7 @@ class Test implements AdapterInterface
             $path = '/';
         }
         if ($uri->getQuery()) $path .= '?' . $uri->getQuery();
-        $request = "{$method} {$path} HTTP/{$http_ver}\r\n";
+        $request = "{$method} {$path} HTTP/{$httpVer}\r\n";
         foreach ($headers as $k => $v) {
             if (is_string($k)) $v = ucfirst($k) . ": $v";
             $request .= "$v\r\n";
