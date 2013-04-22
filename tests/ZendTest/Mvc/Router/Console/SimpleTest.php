@@ -592,6 +592,83 @@ class SimpleTestTest extends TestCase
                     'baz' => true
                 )
             ),
+            // group with group name diferent than options (short)
+            'group-1' => array(
+                'group [-t|--test]:testgroup',
+                array('group', '-t'),
+                array(
+                    'group' => true,
+                    'testgroup' => true,
+                )
+            ),
+            // group with group name diferent than options (long)
+            'group-2' => array(
+                'group [-t|--test]:testgroup',
+                array('group', '--test'),
+                array(
+                    'group' => true,
+                    'testgroup' => true,
+                )
+            ),
+            // group with same name as option (short)
+            'group-3' => array(
+                'group [-t|--test]:test',
+                array('group', '-t'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                )
+            ),
+            // group with same name as option (long)
+            'group-4' => array(
+                'group [-t|--test]:test',
+                array('group', '--test'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                )
+            ),
+            'group-5' => array(
+                'group (-t | --test ):test',
+                array('group', '--test'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                ),
+            ),
+            'group-6' => array(
+                'group (-t | --test ):test',
+                array('group', '-t'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                ),
+            ),
+            'group-7' => array(
+                'group [-x|-y|-z]:test',
+                array('group', '-y'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                ),
+            ),
+            'group-8' => array(
+                'group [--foo|--bar|--baz]:test',
+                array('group', '--foo'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                ),
+            ),
+            'group-9' => array(
+                'group (--foo|--bar|--baz):test',
+                array('group', '--foo'),
+                array(
+                    'group' => true,
+                    'test' => true,
+                ),
+            ),
+
             /*'combined-2' => array(
                 '--foo --bar',
                 array('a','b', 'c', '--foo', '--bar'),
@@ -694,5 +771,19 @@ class SimpleTestTest extends TestCase
                 'constraints' => array('foo' => 'bar')
             )
         );
+    }
+
+    public function testMatchMergeOfTheDefaults()
+    {
+        $defaults = array(
+            'controller' => 'Controller/Test',
+        );
+
+        $request = new ConsoleRequest(array('scriptname.php', 'foo', 'controller'));
+        $route = new Simple('foo controller', array(), $defaults);
+        $match = $route->match($request);
+
+        $this->assertInstanceOf('Zend\Mvc\Router\Console\RouteMatch', $match);
+        $this->assertEquals($defaults['controller'], $match->getParam('controller'));
     }
 }
